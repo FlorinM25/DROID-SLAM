@@ -1,139 +1,144 @@
-# DROID-SLAM
+# DROID-SLAM Setup Guide
+
+## Overview
+DROID-SLAM is designed to work on Linux. Attempts to install it on Windows have been unsuccessful, so it is recommended to use Ubuntu. This guide details the setup process for DROID-SLAM on Ubuntu 22.04 with NVIDIA CUDA 12.2.
+
+## Important Notes
+
+### CUDA Version
+Ensure you install the CUDA version that matches your GPU. If your GPU automatically comes with CUDA 12.x, install CUDA 12.x from the official site. Installing a mismatched CUDA version will cause Ubuntu to crash, requiring a complete reinstallation.
+
+### Dual-Boot Requirement
+Install Ubuntu alongside Windows in a dual-boot setup. Ubuntu won't function correctly in a virtual machine like VirtualBox for this application. There are many tutorials on YouTube to guide you through the dual-boot setup.
+
+### AMD GPU Compatibility
+Please note that if you have an AMD GPU, this setup is unlikely to work.
+
+### Installation Method
+Avoid using conda for package installations as it is slow. Use conda only to create the environment and then install all necessary packages using pip for faster performance. Use Python 3.9 when creating your environment. You can also use venv directly from the pip package virtualenv, but note that it may be less stable over time.
+
+## Environment Setup Commands
+
+### Virtual Environment Setup
+```bash
+pip install virtualenv
+# OR
+python -m venv /path/to/new/virtual/environment
+
+virtualenv -p "path/to/python.exe/of/choice" venvname
+
+# Activate the virtual environment
+venvname\Scripts\activate
+# To deactivate
+deactivate
 
 
-<!-- <center><img src="misc/DROID.png" width="640" style="center"></center> -->
+markdown
+Copy code
+# DROID-SLAM Setup Guide
+
+## Overview
+DROID-SLAM is designed to work on Linux. Attempts to install it on Windows have been unsuccessful, so it is recommended to use Ubuntu. This guide details the setup process for DROID-SLAM on Ubuntu 22.04 with NVIDIA CUDA 12.2.
+
+## Important Notes
+
+### CUDA Version
+Ensure you install the CUDA version that matches your GPU. If your GPU automatically comes with CUDA 12.x, install CUDA 12.x from the official site. Installing a mismatched CUDA version will cause Ubuntu to crash, requiring a complete reinstallation.
+
+### Dual-Boot Requirement
+Install Ubuntu alongside Windows in a dual-boot setup. Ubuntu won't function correctly in a virtual machine like VirtualBox for this application. There are many tutorials on YouTube to guide you through the dual-boot setup.
+
+### AMD GPU Compatibility
+Please note that if you have an AMD GPU, this setup is unlikely to work.
+
+### Installation Method
+Avoid using conda for package installations as it is slow. Use conda only to create the environment and then install all necessary packages using pip for faster performance. Use Python 3.9 when creating your environment. You can also use venv directly from the pip package virtualenv, but note that it may be less stable over time.
+
+## Environment Setup Commands
+
+### Virtual Environment Setup
+```bash
+pip install virtualenv
+# OR
+python -m venv /path/to/new/virtual/environment
+
+virtualenv -p "path/to/python.exe/of/choice" venvname
+
+# Activate the virtual environment
+venvname\Scripts\activate
+# To deactivate
+deactivate
 
 
-[![IMAGE ALT TEXT HERE](misc/screenshot.png)](https://www.youtube.com/watch?v=GG78CSlSHSA)
+### Conda Environment Setup
+conda create --name droidenv python=3.9
 
+# Activate the conda environment
+conda activate droidenv
 
-
-[DROID-SLAM: Deep Visual SLAM for Monocular, Stereo, and RGB-D Cameras](https://arxiv.org/abs/2108.10869)  
-Zachary Teed and Jia Deng
-
-```
-@article{teed2021droid,
-  title={{DROID-SLAM: Deep Visual SLAM for Monocular, Stereo, and RGB-D Cameras}},
-  author={Teed, Zachary and Deng, Jia},
-  journal={Advances in neural information processing systems},
-  year={2021}
-}
-```
-
-**Initial Code Release:** This repo currently provides a single GPU implementation of our monocular, stereo, and RGB-D SLAM systems. It currently contains demos, training, and evaluation scripts. 
-
-
-## Requirements
-
-To run the code you will need ...
-* **Inference:** Running the demos will require a GPU with at least 11G of memory. 
-
-* **Training:** Training requires a GPU with at least 24G of memory. We train on 4 x RTX-3090 GPUs.
-
-## Getting Started
-1. Clone the repo using the `--recursive` flag
-```Bash
-git clone --recursive https://github.com/princeton-vl/DROID-SLAM.git
-```
-
-2. Creating a new anaconda environment using the provided .yaml file. Use `environment_novis.yaml` to if you do not want to use the visualization
-```Bash
-conda env create -f environment.yaml
+### Install Required Packages
+pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+pip install torch_geometric
+pip install torch_scatter torch_sparse torch_cluster torch_spline_conv -f https://data.pyg.org/whl/torch-2.1.0+cu118.html
+pip install ninja
+pip install open3d
+pip install tensorboard
+pip install scipy
+pip install opencv-python
+pip install tqdm
+pip install matplotlib
+pip install suitesparse-graphblas
+pip install PyYAML
+pip install scikit-image
+pip install pytransform3d 
 pip install evo --upgrade --no-binary evo
 pip install gdown
-```
 
-3. Compile the extensions (takes about 10 minutes)
-```Bash
-python setup.py install
-```
-
-
-## Demos
-
-1. Download the model from google drive: [droid.pth](https://drive.google.com/file/d/1PpqVt1H4maBa_GbPJp4NwxRsd9jk-elh/view?usp=sharing)
-
-2. Download some sample videos using the provided script.
-```Bash
-./tools/download_sample_data.sh
-```
-
-Run the demo on any of the samples (all demos can be run on a GPU with 11G of memory). While running, press the "s" key to increase the filtering threshold (= more points) and "a" to decrease the filtering threshold (= fewer points). To save the reconstruction with full resolution depth maps use the `--reconstruction_path` flag.
+## Additional Setup
+If you encounter issues like "python not found", execute the following commands:
+sudo apt-get install python3.x-dev # replace .x with your python version, probably 3.9
+sudo apt install python3.x-distutils
 
 
-```Python
-python demo.py --imagedir=data/abandonedfactory --calib=calib/tartan.txt --stride=2
-```
+Useful Links
+------------
 
-```Python
-python demo.py --imagedir=data/sfm_bench/rgb --calib=calib/eth.txt
-```
+-   [CUDA Downloads](https://developer.nvidia.com/cuda-downloads)
+-   [GCC Setup Issue](https://stackoverflow.com/questions/26053982/setup-script-exited-with-error-command-x86-64-linux-gnu-gcc-failed-with-exit)
+-   [CUDA Installation Guide for Linux](https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html)
+-   [YouTube Dual-Boot Setup Tutorial](https://www.youtube.com/watch?v=ttxtV966jyQ&t=1695s)
+-   [Using Different Python Versions with Virtualenv](https://saturncloud.io/blog/how-to-use-different-python-versions-with-virtualenv/)
+-   [Python Installation on Ubuntu](https://www.makeuseof.com/install-python-ubuntu/)
+-   [PyCharm Installation on Ubuntu](https://www.javatpoint.com/how-to-install-pycharm-in-ubuntu)
+-   [PyTorch Geometric Installation](https://pytorch-geometric.readthedocs.io/en/latest/notes/installation.html)
+-   [PyTorch Geometric Wheels](https://data.pyg.org/whl/)
 
-```Python
-python demo.py --imagedir=data/Barn --calib=calib/barn.txt --stride=1 --backend_nms=4
-```
+Dataset Downloads
+-----------------
 
-```Python
-python demo.py --imagedir=data/mav0/cam0/data --calib=calib/euroc.txt --t0=150
-```
+After setting up DROID-SLAM, download some datasets to test its functionality. Here are some links:
 
-```Python
-python demo.py --imagedir=data/rgbd_dataset_freiburg3_cabinet/rgb --calib=calib/tum3.txt
-```
+-   [Tanks and Temples](https://www.tanksandtemples.org/download/)
+-   [TUM RGB-D Dataset](https://cvg.cit.tum.de/data/datasets/rgbd-dataset/download)
+-   [KITTI Road Dataset](https://www.cvlibs.net/datasets/kitti/eval_road.php)
 
+The Barn link provided in the download_sample_data.sh file does not work; use the Tanks and Temples link instead.
 
-**Running on your own data:** All you need is a calibration file. Calibration files are in the form 
-```
-fx fy cx cy [k1 k2 p1 p2 [ k3 [ k4 k5 k6 ]]]
-```
-with parameters in brackets optional.
+Collecting Your Own Datasets
+----------------------------
 
-## Evaluation
-We provide evaluation scripts for TartanAir, EuRoC, and TUM. EuRoC and TUM can be run on a 1080Ti. The TartanAir and ETH will require 24G of memory.
+To collect your own datasets and run inference:
 
-### TartanAir (Mono + Stereo)
-Download the [TartanAir](https://theairlab.org/tartanair-dataset/) dataset using the script `thirdparty/tartanair_tools/download_training.py` and put them in `datasets/TartanAir`
-```Bash
-./tools/validate_tartanair.sh --plot_curve            # monocular eval
-./tools/validate_tartanair.sh --plot_curve  --stereo  # stereo eval
-```
+1.  **Required Hardware**: A camera with a 3D sensor (Lidar, stereo camera, etc.). An iPhone with a 3D Lidar sensor can work, but you need the intrinsic parameters of your camera.
+2.  **Calibration**: Use the OpenCV chessboard library to find your camera's focal length and center point values for 3D reconstructions. Calibration files are in the form `fx fy cx cy [k1 k2 p1 p2 [ k3 [ k4 k5 k6 ]]]`.
+3.  **Professional Cameras**: Using a professional stereo camera like the Intel RealSense simplifies data collection, as these cameras are pre-calibrated and provide depth information, leading to better 3D reconstructions.
 
-### EuRoC (Mono + Stereo)
-Download the [EuRoC](https://projects.asl.ethz.ch/datasets/doku.php?id=kmavvisualinertialdatasets) sequences (ASL format) and put them in `datasets/EuRoC`
-```Bash
-./tools/evaluate_euroc.sh                             # monocular eval
-./tools/evaluate_euroc.sh --stereo                    # stereo eval
-```
+Hardware Requirements
+---------------------
 
-### TUM-RGBD (Mono)
-Download the fr1 sequences from [TUM-RGBD](https://vision.in.tum.de/data/datasets/rgbd-dataset/download) and put them in `datasets/TUM-RGBD`
-```Bash
-./tools/evaluate_tum.sh                               # monocular eval
-```
+DROID-SLAM is computationally intensive. You will need a GPU with at least 11GB of VRAM, although it is possible to run on a GPU with 8GB VRAM, such as the NVIDIA Quadro P400. Note that performance may vary, and you could encounter "CUDA ran out of memory" errors. The more VRAM, the better. DROID-SLAM runs smoothly on a 4060TI with 16GB VRAM, while it may lag on a 3080TI with 12GB VRAM.
 
-### ETH3D (RGB-D)
-Download the [ETH3D](https://www.eth3d.net/slam_datasets) dataset
-```Bash
-./tools/evaluate_eth3d.sh                             # RGB-D eval
-```
+Additional Resources
+--------------------
 
-## Training
-
-First download the TartanAir dataset. The download script can be found in `thirdparty/tartanair_tools/download_training.py`. You will only need the `rgb` and `depth` data.
-
-```
-python download_training.py --rgb --depth
-```
-
-You can then run the training script. We use 4x3090 RTX GPUs for training which takes approximatly 1 week. If you use a different number of GPUs, adjust the learning rate accordingly.
-
-**Note:** On the first training run, covisibility is computed between all pairs of frames. This can take several hours, but the results are cached so that future training runs will start immediately. 
-
-
-```
-python train.py --datapath=<path to tartanair> --gpus=4 --lr=0.00025
-```
-
-
-## Acknowledgements
-Data from [TartanAir](https://theairlab.org/tartanair-dataset/) was used to train our model. We additionally use evaluation tools from [evo](https://github.com/MichaelGrupp/evo) and [tartanair_tools](https://github.com/castacks/tartanair_tools).
+You can find more detailed discussions and troubleshooting tips on the official DROID-SLAM GitHub issue tracker: [DROID-SLAM Issue #115](https://github.com/princeton-vl/DROID-SLAM/issues/115#issuecomment-1851983842).
