@@ -1,0 +1,104 @@
+DROID-SLAM only works on Linux (to my knowledge). I've tried multiple times on Windows, but none of the methods worked.
+
+I have installed Ubuntu 22.04 with NVIDIA CUDA 12.2. 
+
+!!IMPORTAT NOTE!! You have to install the same CUDA prefix version that your GPU come with. So, if your GPU comes automatically (by automatically I mean when Ubuntu installs drivers for your PC) with CUDA 12.x, you have to install CUDA from the official site (see useful links down below) with 12.x. Doesn't matter that in the .yaml cuda-toolkit is specified with 11.3 (you will se a message at setup that says something like "different versions of CUDA detected, but this should not be a problem"). If you install a different CUDA prefix, your Ubuntu will crash completely and you will have to reinstall it.
+
+!!IMPORTANT NOTE!! Ubuntu will have to be installed alongside Windows, so, in dual-boot. There are a ton of tutorials on YouTube, you can search there how to do that. Ubuntu won't work on a virtual machine in applications like VirtualBox.
+
+!!IMPORTANT NOTE!! If you have AMD GPU I am pretty sure this won't work.
+
+Below you have every command needed for the environment setup. Don't install packages using conda because that will take ages. Use conda only for creating the environment and then install everything with pip commands, because it works way faster. Use python 3.9 when creating your environment. You can also use venv directly from the pip package virtualenv for creating the environment, but that is not "stable" as the .bat file will bug in time.
+
+I have this comment as well on GitHub: https://github.com/princeton-vl/DROID-SLAM/issues/115#issuecomment-1851983842
+
+
+
+
+pip install virtualenv    OR     python -m venv /path/to/new/virtual/environment
+
+virtualenv -p "path/to/python.exe/of/choice" venvname
+
+venvname\Scripts\activate     deactivate
+
+///////////////////////////////////////
+
+conda create --name droidenv python=3.9
+
+pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+
+pip install torch_geometric
+
+pip install torch_scatter torch_sparse torch_cluster torch_spline_conv -f https://data.pyg.org/whl/torch-2.1.0+cu118.html
+
+pip install ninja
+
+pip install open3d
+
+pip install tensorboard
+
+pip install scipy
+
+pip install opencv-python
+
+pip install tqdm
+
+pip install matplotlib
+
+pip install suitesparse-graphblas
+
+pip install PyYAML
+
+pip install scikit-image
+
+pip install numpy-quaternion // no need 
+
+pip install pytransform3d 
+
+pip install evo --upgrade --no-binary evo
+
+pip install gdown
+
+// in case there are problems like "python not found"
+sudo apt-get install python3.x-dev (.x will be replaced by the actual number of your python version, probably 3.9)
+sudo apt install python3.x-distutils
+
+
+
+
+
+//useful links
+https://developer.nvidia.com/cuda-downloads
+https://stackoverflow.com/questions/26053982/setup-script-exited-with-error-command-x86-64-linux-gnu-gcc-failed-with-exit
+https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html
+https://www.youtube.com/watch?v=ttxtV966jyQ&t=1695s
+https://saturncloud.io/blog/how-to-use-different-python-versions-with-virtualenv/
+https://www.makeuseof.com/install-python-ubuntu/
+https://www.javatpoint.com/how-to-install-pycharm-in-ubuntu
+https://pytorch-geometric.readthedocs.io/en/latest/notes/installation.html
+https://data.pyg.org/whl/
+
+
+
+
+
+I hope you successfully achieved the setup for DROID-SLAM. 
+Now it's time to download some datasets and see if it works.
+There are links provided in the download_sample_data.sh file, but for more datasets you can search some of them online as well. Here are some links:
+https://www.tanksandtemples.org/download/
+https://cvg.cit.tum.de/data/datasets/rgbd-dataset/download
+https://www.cvlibs.net/datasets/kitti/eval_road.php
+The Barn link does not work, so don't bother, the link is the first one above, the Tanks and Temples.
+
+
+How to collect your own datasets and run the inference with them?
+You need a camera with some sort of a 3D sensor (Lidar, stereo camera, etc.)
+You can actually use an iPhone phone because it has a 3D Lidar sensor in the camera so it will work, BUT you will need to find the instricst parameters of your camera. 
+Finding instructs parameters can be done using OpenCV chessboard library. This is a whole discussion, but basically you need to know your focal and the center point values of your camera in order to do 3D reconstructions. That is also said in the DROID-SLAM page: "Running on your own data: All you need is a calibration file. Calibration files are in the form fx fy cx cy [k1 k2 p1 p2 [ k3 [ k4 k5 k6 ]]]"
+
+But, if you use a professional stereo camera like the Intel RealSense, the collecting data part will be way easier, because stereo cameras are pre-calibrated, they give depth information, and they way better characteristics so the 3D reconstruction will probably be better.
+
+
+Hardware requirements.
+DROID-SLAM is very computationally expensive. You will need a GPU with at least 11GB of VRAM, that is what is says on the official DROID-SLAM GitHub page, but you can run it on a 8GB VRAM NVIDIA Quadro P400, BUT depending on the dataset you can get this message "CUDA ran out of memory", and that means that your PC/GPU is not good enough for this application. 
+So, the more VRAM the better. I even tried on a 3080TI with 12GB VRAM and there was lag in the inference. On a 4060TI with 16GB VRAM DROID-SLAM works great! Of course, these types of projects are built on companies/universities servers with 10 GPUs with 24GB RAM stacked together :)).
