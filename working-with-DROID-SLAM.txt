@@ -89,3 +89,8 @@ https://www.tanksandtemples.org/download/
 https://cvg.cit.tum.de/data/datasets/rgbd-dataset/download
 https://www.cvlibs.net/datasets/kitti/eval_road.php
 The Barn link does not work, so don't bother, the link is the first one above, the Tanks and Temples.
+
+
+Hardware requirements.
+DROID-SLAM is very computationally expensive. You will need a GPU with at least 11GB of VRAM, that is what is says on the official DROID-SLAM GitHub page, but you can run it on a 8GB VRAM NVIDIA GPU, BUT depending on the dataset you can get this message "CUDA ran out of memory", and that means that your PC/GPU is not good enough for this application. 
+So, the more VRAM the better. I even tried on a 3080TI with 12GB VRAM and there was lag in the inference. On a 4060TI with 16GB VRAM DROID-SLAM works great! 
